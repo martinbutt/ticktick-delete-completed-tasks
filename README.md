@@ -22,11 +22,7 @@ Before you begin, it is recommended to backup your tasks. https://ticktick.com/w
 The script can backup the tasks it is deleting to a local file using the `-b` parameter.
 
 ### Estimated run time
+The script deletes 200 tasks approximately every 5 seconds
 
 ### Sync conflicts
 It is recommended to not use Ticktick while the script is running, as this may result in sync conflicts and data loss.
-
-# Notes
-Copy the curl from this page https://api.ticktick.com/api/v2/project/all/completedInAll/
-
-The script take a long time - refresh this page to look for changes to make sure it is running https://api.ticktick.com/api/v2/project/all/completedInAll/
