@@ -87,3 +87,5 @@ while [[ $(wc -c "${TMP_FILE}" | cut -d " " -f1) -gt 10 ]]; do
     fetch_completed_tasks
 
 done
+
+rm -f "${TMP_FILE}"
