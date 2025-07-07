@@ -38,13 +38,30 @@ if [ -z "${COOKIE_VALUE}" ]; then
     exit 1
 fi
 
+# Common headers for all requests
+HEADERS=(
+  -H 'accept: application/json, text/plain, */*'
+  -H 'Accept-Language: en-US,en;q=0.9'
+  -H 'hl: en'
+  -H 'Priority: u=1, i'
+  -H 'Sec-CH-UA: "Not.A/Brand";v="99", "Chromium";v="136"'
+  -H 'Sec-CH-UA-Mobile: ?0'
+  -H 'Sec-CH-UA-Platform: "macOS"'
+  -H 'Sec-Fetch-Dest: empty'
+  -H 'Sec-Fetch-Mode: cors'
+  -H 'Sec-Fetch-Site: same-site'
+  -H 'X-CSRFToken: '
+  -H 'X-Device: {"platform":"web","os":"macOS","device":"Chrome","name":"","version":6306,"channel":"website"}'
+  -H 'X-TZ: UTC'
+  -H "Cookie: t=$COOKIE_VALUE"
+  -e 'https://ticktick.com/'
+  --compressed
+)
+
 TMP_FILE=$(mktemp --suffix '-ticktick-delete-completed-tasks.json')
 
 function fetch_completed_tasks() {
-    curl 'https://api.ticktick.com/api/v2/project/all/completedInAll/' \
-      -H 'content-type: application/json;charset=UTF-8' \
-      -H 'cookie: t='"${COOKIE_VALUE}" \
-      --compressed > "${TMP_FILE}"
+    curl 'https://api.ticktick.com/api/v2/project/all/completedInAll/' "${HEADERS[@]}" > "${TMP_FILE}"
 }
 
 fetch_completed_tasks
@@ -76,11 +93,9 @@ while [[ $(wc -c "${TMP_FILE}" | cut -d " " -f1) -gt 10 ]]; do
 
     COMMANDS=$(join_by , "${COMMANDS[@]}")
 
-    curl 'https://api.ticktick.com/api/v2/batch/task' \
+    curl 'https://api.ticktick.com/api/v2/batch/task' "${HEADERS[@]}" \
       -H 'content-type: application/json;charset=UTF-8' \
-      -H 'cookie: t='"${COOKIE_VALUE}" \
-      --data-raw '{"add":[],"update":[],"delete":['"${COMMANDS}"'],"addAttachments":[],"updateAttachments":[],"deleteAttachments":[]}' \
-      --compressed
+      --data-raw '{"add":[],"update":[],"delete":['"${COMMANDS}"'],"addAttachments":[],"updateAttachments":[],"deleteAttachments":[]}'
 
     COMMANDS=()
 
